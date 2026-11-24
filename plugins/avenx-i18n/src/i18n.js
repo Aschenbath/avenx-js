@@ -251,7 +251,8 @@ export function createI18n(options = {}) {
     syncCache();
 
     if (typeof key !== 'string' || key === '') {
-      report('key', `a translation key must be a non-empty string, received ${JSON.stringify(key)}`, { locale });
+      const description = key === '' ? '""' : key === null ? 'null' : typeof key;
+      report('key', `a translation key must be a non-empty string, received ${description}`, { locale });
       return '';
     }
 

@@ -118,8 +118,12 @@ function toDate(value) {
   if (value === null || value === undefined || typeof value === 'boolean') {
     return null;
   }
-  const date = value instanceof Date ? value : new Date(value);
-  return Number.isNaN(date.getTime()) ? null : date;
+  try {
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  } catch {
+    return null;
+  }
 }
 
 /**

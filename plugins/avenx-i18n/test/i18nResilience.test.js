@@ -533,6 +533,7 @@ async function runTests() {
   await testCacheCorrectness();
   await testAdapterInterop();
   await testBoundedDiagnostics();
+  await import('./invalidInputs.test.js');
 
   console.log('\n🎉 ALL AVENX I18N RESILIENCE TESTS PASSED SUCCESSFULLY!\n');
 }
