@@ -7,6 +7,8 @@ Avenx-JS provides a native **Provide & Inject** mechanism for ancestor-descendan
 
 :::note[Class-based authoring]
 Provide and inject are configured on **class-based** components and pages: subclasses of `AvenxComponent` / `AvenxPage` saved as ordinary `.js` modules and registered with `app.register()` / `app.registerPage()`. Single-file templates (`.component.js` / `.page.js`) do not currently expose `<provide>` or `<inject>` tags. Saving a class module under a `.component.js` or `.page.js` name makes the compiler treat the file as template markup, so the class source can appear as visible text in the page.
+
+In a single-file template, use [bridges](/core-concepts/bridges/) for shared state or props to pass values from a known parent.
 :::
 
 ## How Provide & Inject Works
@@ -113,6 +115,12 @@ export default class UserCard extends AvenxComponent {
 ---
 
 ## Reactivity & Scope Shadowing
+
+### Lazy Resolution
+
+An injected key is resolved **lazily, on every access**. It is not copied or cached at mount time: Avenx walks up the DOM tree from the consumer's root element, finds the nearest ancestor providing that key, and reads its current value.
+
+Object-form providers are wrapped in a reactive proxy, so consumers observe updates to the provided object. Array-form providers read the provider's live state, props, methods, or bridges by name instead of copying the initial value.
 
 ### Targeted Reactivity Updates
 
