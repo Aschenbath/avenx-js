@@ -88,6 +88,39 @@ export default {
 ```
 
 
+### Route Metadata
+
+An object route definition can attach arbitrary `meta` data. The router exposes it on the reactive `$route` object when that route becomes active; the application decides how to use its fields.
+
+```javascript avenx-build
+import { AvenxApp } from 'avenx-core/runtime';
+const app = new AvenxApp({ target: '#app' });
+app.initRouter({
+  '/': 'Home',
+  '/profile/:id': { page: 'Profile', meta: { title: 'Profile details' } },
+});
+```
+
+On the profile page, `this.$route.meta.title` is `'Profile details'`. Templates can read it as `{{ $route.meta.title }}`. A route without metadata exposes an empty object. Navigation callbacks receive the destination metadata as `to.meta` and the previous route's metadata as `from.meta` when a previous route exists.
+
+### Route Redirects
+
+Use `redirect` for a route alias that navigates to another route instead of mounting a page:
+
+```javascript avenx-build
+import { AvenxApp } from 'avenx-core/runtime';
+const app = new AvenxApp({ target: '#app' });
+app.initRouter({
+  '/': 'Home',
+  '/profile/:id': 'Profile',
+  '/old': { redirect: '/profile/1' },
+});
+```
+
+Opening `#/old` replaces the current history entry with `#/profile/1` and activates `Profile`. A redirect may also be a function receiving the parsed route parameters and returning a target string or a Promise resolving to one.
+
+The redirect runs before global `beforeEach` callbacks, the source route's `canActivate` handlers, and page mounting. The destination route then follows the usual navigation checks. The router stops a chain when it revisits a target or exceeds 10 redirects and logs the reason.
+
 ## 3. Dynamic Route Parameters
 
 Route segments starting with `:` are dynamic variables. The values parsed from the URL are automatically added to the Page component's `state` object and can be read inside templates or actions:
@@ -173,7 +206,10 @@ The `$route` object exposes the following properties:
 | -------- | ----------- |
 | `$route.params` | Contains the dynamic route parameters extracted from the current URL. |
 | `$route.hash` | Returns the current route hash. |
+| `$route.path` | The matched path without the hash prefix or query string. |
 | `$route.page` | Returns the active page associated with the current route. |
+| `$route.query` | Parsed [query parameters](#query-parameters). |
+| `$route.meta` | The active definition's [route metadata](#route-metadata), or an empty object. |
 
 ### Example
 
